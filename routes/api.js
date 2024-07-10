@@ -107,22 +107,24 @@ module.exports = function (app) {
           return;
         }
 
+        let issue = await IssueModel.findById(_id);
+        if (!issue) {
+          res.json({ error: "could not update issue", _id });
+          return;
+        }
+
         if (!hasUpdates) {
           res.json({ error: "no update field(s) sent", _id });
           return;
         }
 
-        let issue = await IssueModel.findByIdAndUpdate(
+        issue = await IssueModel.findByIdAndUpdate(
           _id,
           updateFields,
           { new: true }
         );
 
-        if (!issue) {
-          res.json({ error: "could not update issue", _id });
-        } else {
-          res.json({ result: "successfully updated", _id });
-        }
+        res.json({ result: "successfully updated", _id });
       } catch (err) {
         res.json({ error: "could not update", _id });
       }
