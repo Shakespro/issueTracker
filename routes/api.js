@@ -68,7 +68,7 @@ module.exports = function (app) {
       let projectName = req.params.project;
       const { _id, issue_title, issue_text, created_by, assigned_to, status_text, open } = req.body;
       if (!_id) {
-        res.json({ error: "missing _id" });
+        res.json({ error: "missing _id", _id: _id });
         return;
       }
 
@@ -103,18 +103,18 @@ module.exports = function (app) {
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
         if (!projectModel) {
-          res.json({ error: "could not update issue", _id });
+          res.json({ error: "could not update issue", _id: _id });
           return;
         }
 
         let issue = await IssueModel.findById(_id);
         if (!issue) {
-          res.json({ error: "could not update issue", _id });
+          res.json({ error: "could not update issue", _id: _id });
           return;
         }
 
         if (!hasUpdates) {
-          res.json({ error: "no update field(s) sent", _id });
+          res.json({ error: "no update field(s) sent", _id: _id });
           return;
         }
 
@@ -124,9 +124,9 @@ module.exports = function (app) {
           { new: true }
         );
 
-        res.json({ result: "successfully updated", _id });
+        res.json({ result: "successfully updated", _id: issue._id });
       } catch (err) {
-        res.json({ error: "could not update", _id });
+        res.json({ error: "could not update", _id: _id });
       }
     })
     .delete(async (req, res) => {
