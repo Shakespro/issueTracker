@@ -197,6 +197,7 @@ suite("Functional Tests", function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, "no update field(s) sent");
+            assert.equal(res.body._id, issue1._id);
             done();
           });
       });
@@ -212,21 +213,21 @@ suite("Functional Tests", function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, "could not update issue");
+            assert.equal(res.body._id, "668e657df323336a3586d5d2");
             done();
           });
       });
     });
 
     suite("3 DELETE request Tests", function() {
-      test("Delete an issue: DELETE request to /api/issues/projects", function(done) {
+      test("Delete an issue: DELETE request to /api/issues/{project}", function(done) {
         chai.request(server)
           .delete("/api/issues/testing123")
-          .send({
-            _id: issue1._id,
-          })
+          .send({ _id: issue1._id })
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.result, "successfully deleted");
+            assert.equal(res.body._id, issue1._id);
             done();
           });
       });
@@ -234,12 +235,11 @@ suite("Functional Tests", function() {
       test("Delete an issue with an invalid _id: DELETE request to /api/issues/{project}", function(done) {
         chai.request(server)
           .delete("/api/issues/testing123")
-          .send({
-            _id: "668e657df323336a3586d5d2",
-          })
+          .send({ _id: "668e657df323336a3586d5d2" })
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, "could not delete");
+            assert.equal(res.body._id, "668e657df323336a3586d5d2");
             done();
           });
       });
@@ -247,7 +247,6 @@ suite("Functional Tests", function() {
       test("Delete an issue with missing _id: DELETE request to /api/issues/{project}", function(done) {
         chai.request(server)
           .delete("/api/issues/testing123")
-          .send({})
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, "missing _id");
