@@ -103,7 +103,8 @@ module.exports = function (app) {
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
         if (!projectModel) {
-          throw new Error("project not found");
+          res.json({ error: "could not update issue", _id });
+          return;
         }
 
         if (!hasUpdates) {
