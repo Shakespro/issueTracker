@@ -2,9 +2,7 @@ const IssueModel = require("../models").Issue;
 const ProjectModel = require("../models").Project;
 
 module.exports = function (app) {
-
   app.route('/api/issues/:project')
-
     .get(async (req, res) => {
       let projectName = req.params.project;
       try {
@@ -16,6 +14,16 @@ module.exports = function (app) {
         const issues = await IssueModel.find({
           projectID: project._id,
           ...req.query,
+        }).select({
+          _id: 1,
+          issue_title: 1,
+          issue_text: 1,
+          created_on: 1,
+          updated_on: 1,
+          created_by: 1,
+          assigned_to: 1,
+          open: 1,
+          status_text: 1,
         });
         if (!issues.length) {
           res.json([{ error: "no issues found" }]);
@@ -26,7 +34,6 @@ module.exports = function (app) {
         res.json({ error: "could not get issues" });
       }
     })
-
     .post(async (req, res) => {
       let projectName = req.params.project;
       const { issue_title, issue_text, created_by, assigned_to, status_text } = req.body;
@@ -48,6 +55,7 @@ module.exports = function (app) {
           updated_on: new Date(),
           created_by,
           assigned_to: assigned_to || '',
+          open: true,
           status_text: status_text || '',
         });
         const issue = await issueModel.save();
@@ -56,7 +64,6 @@ module.exports = function (app) {
         res.json({ error: "could not post issue" });
       }
     })
-
     .put(async (req, res) => {
       let projectName = req.params.project;
       const { _id, issue_title, issue_text, created_by, assigned_to, status_text, open } = req.body;
@@ -64,20 +71,52 @@ module.exports = function (app) {
         res.json({ error: "missing _id" });
         return;
       }
-      if (!issue_title && !issue_text && !created_by && !assigned_to && !status_text && open === undefined) {
-        res.json({ error: "no update field(s) sent", _id });
-        return;
+
+      let updateFields = {};
+      let hasUpdates = false;
+      if (issue_title !== undefined) {
+        updateFields.issue_title = issue_title;
+        hasUpdates = true;
       }
+      if (issue_text !== undefined) {
+        updateFields.issue_text = issue_text;
+        hasUpdates = true;
+      }
+      if (created_by !== undefined) {
+        updateFields.created_by = created_by;
+        hasUpdates = true;
+      }
+      if (assigned_to !== undefined) {
+        updateFields.assigned_to = assigned_to;
+        hasUpdates = true;
+      }
+      if (status_text !== undefined) {
+        updateFields.status_text = status_text;
+        hasUpdates = true;
+      }
+      if (open !== undefined) {
+        updateFields.open = open;
+        hasUpdates = true;
+      }
+      updateFields.updated_on = new Date();
+
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
         if (!projectModel) {
           throw new Error("project not found");
         }
+
+        if (!hasUpdates) {
+          res.json({ error: "no update field(s) sent", _id });
+          return;
+        }
+
         let issue = await IssueModel.findByIdAndUpdate(
           _id,
-          { ...req.body, updated_on: new Date() },
+          updateFields,
           { new: true }
         );
+
         if (!issue) {
           res.json({ error: "could not update issue", _id });
         } else {
@@ -87,7 +126,6 @@ module.exports = function (app) {
         res.json({ error: "could not update", _id });
       }
     })
-
     .delete(async (req, res) => {
       let projectName = req.params.project;
       const { _id } = req.body;
@@ -111,5 +149,4 @@ module.exports = function (app) {
         res.json({ error: "could not delete", _id });
       }
     });
-
 };
