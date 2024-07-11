@@ -100,6 +100,11 @@ module.exports = function (app) {
       }
       updateFields.updated_on = new Date();
 
+      if (!hasUpdates) {
+        res.json({ error: 'no update field(s) sent', '_id': _id });
+        return;
+      }
+
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
         if (!projectModel) {
@@ -107,22 +112,16 @@ module.exports = function (app) {
           return;
         }
 
-        let issue = await IssueModel.findById(_id);
-        if (!issue) {
-          res.json({ error: "could not update issue", _id });
-          return;
-        }
-
-        if (!hasUpdates) {
-          res.json({ error: 'no update field(s) sent', '_id': _id });
-          return;
-        }
-
-        issue = await IssueModel.findByIdAndUpdate(
+        const issue = await IssueModel.findByIdAndUpdate(
           _id,
           updateFields,
           { new: true }
         );
+
+        if (!issue) {
+          res.json({ error: "could not update issue", _id });
+          return;
+        }
 
         res.json({ result: "successfully updated", _id });
       } catch (err) {
