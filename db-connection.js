@@ -1,25 +1,23 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const IssueSchema = new Schema({
-  projectID: { type: mongoose.Types.ObjectId, required: true },
+const issueSchema = new Schema({
+  projectID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Project' },
   issue_title: { type: String, required: true },
-  issue_text: { type: String, require: true },
-  created_on: Date,
-  updated_on: Date,
+  issue_text: { type: String, required: true },
+  created_on: { type: Date, default: Date.now },
+  updated_on: { type: Date, default: Date.now },
   created_by: { type: String, required: true },
-  assigned_to: String,
-  open: Boolean,
-  status_text: String,
+  assigned_to: { type: String },
+  open: { type: Boolean, default: true },
+  status_text: { type: String }
 });
-const Issue = mongoose.model('Issue', IssueSchema);
 
-const ProjectSchema = new Schema({
-  name: { type: String, required: true },
+const projectSchema = new Schema({
+  name: { type: String, required: true }
 });
-const Project = mongoose.model('Project', ProjectSchema);
 
-exports.Issue = Issue;
-exports.Project = Project;
+const Issue = mongoose.models.Issue || mongoose.model('Issue', issueSchema);
+const Project = mongoose.models.Project || mongoose.model('Project', projectSchema);
+
+module.exports = { Issue, Project };
