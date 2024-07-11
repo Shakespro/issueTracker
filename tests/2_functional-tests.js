@@ -211,8 +211,7 @@ describe('Functional Tests', function() {
           })
           .end(function(err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'could not update');
-            assert.equal(res.body._id, '668e657df323336a3586d5d2');
+            assert.deepEqual(res.body, { error: 'could not update', _id: '668e657df323336a3586d5d2' });
             done();
           });
       });

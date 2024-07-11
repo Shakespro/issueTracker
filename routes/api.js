@@ -103,18 +103,18 @@ module.exports = function (app) {
       try {
         const projectModel = await ProjectModel.findOne({ name: projectName });
         if (!projectModel) {
-          res.json({ error: "could not update", '_id': _id });
+          res.json({ error: "could not update", _id });
           return;
         }
 
         let issue = await IssueModel.findById(_id);
         if (!issue) {
-          res.json({ error: "could not update", '_id': _id });
+          res.json({ error: "could not update", _id });
           return;
         }
 
         if (!hasUpdates) {
-          res.json({ error: 'no update field(s) sent', '_id': _id });
+          res.json({ error: "no update field(s) sent", _id });
           return;
         }
 
@@ -126,7 +126,7 @@ module.exports = function (app) {
 
         res.json({ result: "successfully updated", _id });
       } catch (err) {
-        res.json({ error: 'could not update', '_id': _id });
+        res.json({ error: "could not update", _id });
       }
     })
     .delete(async (req, res) => {
