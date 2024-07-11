@@ -205,13 +205,14 @@ describe('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/testing123')
           .send({
-            _id: '668e657df323336a3586d5d2',
+            _id: '996f767eg43447b4697e6e3',
             issue_title: 'update',
             issue_text: 'update',
           })
           .end(function(err, res) {
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body, { error: 'could not update' });
+            assert.equal(res.body.error, 'could not update');
+            assert.equal(res.body._id, '996f767eg43447b4697e6e3');
             done();
           });
       });
@@ -233,11 +234,11 @@ describe('Functional Tests', function() {
       it('Delete an issue with an invalid _id: DELETE request to /api/issues/{project}', function(done) {
         chai.request(server)
           .delete('/api/issues/testing123')
-          .send({ _id: '668e657df323336a3586d5d2' })
+          .send({ _id: '996f767eg43447b4697e6e3' })
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'could not delete');
-            assert.equal(res.body._id, '668e657df323336a3586d5d2');
+            assert.equal(res.body._id, '996f767eg43447b4697e6e3');
             done();
           });
       });
