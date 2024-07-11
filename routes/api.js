@@ -113,7 +113,6 @@ module.exports = function (app) {
           return;
         }
 
-        // CHANGE 1: Update the response when no update fields are sent
         if (!hasUpdates) {
           res.json({ error: 'no update field(s) sent', '_id': _id });
           return;
@@ -127,7 +126,6 @@ module.exports = function (app) {
 
         res.json({ result: "successfully updated", _id });
       } catch (err) {
-        // CHANGE 2: Update the response when there's an error updating the issue
         res.json({ error: 'could not update', '_id': _id });
       }
     })
