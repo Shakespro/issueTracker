@@ -4,14 +4,15 @@ const { Schema } = mongoose;
 const IssueSchema = new Schema({
     projectID: { type: mongoose.Types.ObjectId, required: true },
     issue_title: { type: String, required: true },
-    issue_text: { type: String, require: true },
-    created_on: Date,
-    updated_on: Date,
+    issue_text: { type: String, required: true },
+    created_on: { type: Date, default: Date.now },
+    updated_on: { type: Date, default: Date.now },
     created_by: { type: String, required: true },
     assigned_to: String,
-    open: Boolean,
+    open: { type: Boolean, default: true },
     status_text: String,
 });
+
 const Issue = mongoose.model("Issue", IssueSchema);
 
 const ProjectSchema = new Schema({
@@ -19,5 +20,7 @@ const ProjectSchema = new Schema({
 });
 const Project = mongoose.model("Project", ProjectSchema);
 
-exports.Issue = Issue;
-exports.Project = Project;
+module.exports = {
+    Issue,
+    Project
+};
