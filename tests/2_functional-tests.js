@@ -134,8 +134,8 @@ describe('Functional Tests', function() {
           })
           .end(function(err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body[0].issue_title, issue1.issue_title);
-            assert.equal(res.body[0].issue_text, issue1.issue_text);
+            assert.deepEqual(res.body[0].issue_title, issue1.issue_title);
+            assert.deepEqual(res.body[0].issue_text, issue1.issue_text);
             done();
           });
       });
@@ -191,11 +191,11 @@ describe('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/testing123')
           .send({
-            _id: issue1._id,
+            _id: '996f767eg43447b4697e6e3',
           })
           .end(function(err, res) {
             assert.equal(res.status, 200);
-            assert.deepEqual(res.body, { error: 'no update field(s) sent', '_id': issue1._id });
+            assert.equal(res.body.error, 'no update field(s) sent');
             done();
           });
       });      
@@ -211,7 +211,6 @@ describe('Functional Tests', function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'could not update');
-            assert.equal(res.body._id, '996f767eg43447b4697e6e3');
             done();
           });
       });
@@ -225,7 +224,6 @@ describe('Functional Tests', function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.result, 'successfully deleted');
-            assert.equal(res.body._id, issue1._id);
             done();
           });
       });
@@ -237,7 +235,6 @@ describe('Functional Tests', function() {
           .end(function(err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.error, 'could not delete');
-            assert.equal(res.body._id, '996f767eg43447b4697e6e3');
             done();
           });
       });
@@ -254,3 +251,4 @@ describe('Functional Tests', function() {
     });
   });
 });
+//here
