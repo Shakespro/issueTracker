@@ -195,11 +195,10 @@ describe('Functional Tests', function() {
           })
           .end(function(err, res) {
             assert.equal(res.status, 200);
-            assert.equal(res.body.error, 'no update field(s) sent');
-            assert.equal(res.body._id, issue1._id);
+            assert.deepEqual(res.body, { error: 'no update field(s) sent', '_id': issue1._id });
             done();
           });
-      });
+      });      
 
       it('Update an issue with an invalid _id: PUT request to /api/issues/{project}', function(done) {
         chai.request(server)
